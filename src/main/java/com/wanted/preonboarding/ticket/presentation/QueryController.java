@@ -16,18 +16,20 @@ import java.util.List;
 @RequestMapping("query")
 @RequiredArgsConstructor
 public class QueryController {
+
     private final TicketSeller ticketSeller;
 
     @GetMapping("/all/performance")
     public ResponseEntity<ResponseHandler<List<PerformanceInfo>>> getAllPerformanceInfoList() {
         System.out.println("getAllPerformanceInfoList");
         return ResponseEntity
-            .ok()
-            .body(ResponseHandler.<List<PerformanceInfo>>builder()
-                .message("Success")
-                .statusCode(HttpStatus.OK)
-                .data(ticketSeller.getAllPerformanceInfoList())
-                .build()
-            );
+                .ok()
+                .body(ResponseHandler.<List<PerformanceInfo>>builder()
+                        .message("Success")
+                        .statusCode(HttpStatus.OK)
+                        .data(ticketSeller.getAllPerformanceInfoList())
+                        .build()
+                );
     }
+
 }
