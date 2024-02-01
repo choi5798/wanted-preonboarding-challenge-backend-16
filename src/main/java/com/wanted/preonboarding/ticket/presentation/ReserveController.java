@@ -1,9 +1,13 @@
 package com.wanted.preonboarding.ticket.presentation;
 
+import com.wanted.preonboarding.core.domain.response.ResponseHandler;
 import com.wanted.preonboarding.ticket.application.TicketSeller;
 import com.wanted.preonboarding.ticket.domain.vo.ReserveInfo;
 import com.wanted.preonboarding.ticket.presentation.dto.ReserveCreateRequest;
 import lombok.RequiredArgsConstructor;
+import org.springframework.http.HttpStatus;
+import org.springframework.http.ResponseEntity;
+import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -19,7 +23,7 @@ public class ReserveController {
     private final TicketSeller ticketSeller;
 
     @PostMapping
-    public boolean reservation(@RequestBody ReserveCreateRequest request) {
+    public ResponseEntity<ResponseHandler<ReserveInfo>> createReservation(@RequestBody ReserveCreateRequest request) {
         System.out.println("reservation");
         ReserveInfo reserveInfo = ReserveInfo.builder()
                 .reservationName(request.name())
@@ -31,19 +35,24 @@ public class ReserveController {
                 .seat(request.seat())
                 .build();
 
-        return ticketSeller.reserve(reserveInfo);
+        ReserveInfo completedReserveInfo = ticketSeller.reserve(reserveInfo);
+        return ResponseEntity.ok()
+                .body(
+                        ResponseHandler.<ReserveInfo>builder()
+                                .statusCode(HttpStatus.OK)
+                                .message("Success")
+                                .data(completedReserveInfo)
+                                .build()
+                );
+        }
 
-//        return ticketSeller.reserve(ReserveInfo.builder()
-//                .performanceId(UUID.fromString("4438a3e6-b01c-11ee-9426-0242ac180002"))
-//                .reservationName("유진호")
-//                .reservationPhoneNumber("010-1234-1234")
-//                .reservationStatus("reserve")
-//                .amount(200000)
-//                .round(1)
-//                .line('A')
-//                .seat(1)
-//                .build()
-//        );
+    @GetMapping
+    public void getAllReservations() {
+
+    }
+
+    public void alarmReservationIsAvailable() {
+
     }
 
 }

@@ -35,21 +35,28 @@ public class TicketSeller {
         return PerformanceInfo.of(performanceRepository.findByName(name));
     }
 
-    public boolean reserve(ReserveInfo reserveInfo) {
+    public ReserveInfo reserve(ReserveInfo reserveInfo) {
         log.info("reserveInfo ID => {}", reserveInfo.getPerformanceId());
         Performance info = performanceRepository.findById(reserveInfo.getPerformanceId())
-                .orElseThrow(EntityNotFoundException::new);
-        String enableReserve = info.getIsReserve();
-        if (enableReserve.equalsIgnoreCase("enable")) {
-            // 1. 결제
-            int price = info.getPrice();
-            reserveInfo.setAmount(reserveInfo.getAmount() - price);
-            // 2. 예매 진행
-            reservationRepository.save(Reservation.of(reserveInfo));
-            return true;
+                .orElseThrow(() -> new EntityNotFoundException("존재하지 않는 행사입니다."));
 
-        } else {
-            return false;
+        String enableReserve = info.getIsReserve();
+        if (!enableReserve.equalsIgnoreCase("enable")) {
+            throw new IllegalStateException("예약할 수 없는 행사입니다.");
+        }
+
+        // 1. 결제
+        int price = info.getPrice();
+        validatePrice(reserveInfo.getAmount(), price);
+        reserveInfo.setAmount(reserveInfo.getAmount() - price);
+        // 2. 예매 진행
+        reservationRepository.save(Reservation.of(reserveInfo));
+        return reserveInfo;
+    }
+
+    private void validatePrice(long amount, int price) {
+        if (amount < price) {
+            throw new IllegalStateException("잔고가 부족합니다.");
         }
     }
 

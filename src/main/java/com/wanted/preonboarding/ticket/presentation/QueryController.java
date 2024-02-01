@@ -7,6 +7,7 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
@@ -29,6 +30,19 @@ public class QueryController {
                         .statusCode(HttpStatus.OK)
                         .data(ticketSeller.getAllPerformanceInfoList())
                         .build()
+                );
+    }
+
+    @GetMapping("/performance/{performanceName}")
+    public ResponseEntity<ResponseHandler<PerformanceInfo>> getPerformanceDetail(@PathVariable String performanceName) {
+        return ResponseEntity
+                .ok()
+                .body(
+                        ResponseHandler.<PerformanceInfo>builder()
+                                .message("Success")
+                                .statusCode(HttpStatus.OK)
+                                .data(ticketSeller.getPerformanceInfoDetail(performanceName))
+                                .build()
                 );
     }
 

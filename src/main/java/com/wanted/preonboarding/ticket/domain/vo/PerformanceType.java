@@ -1,5 +1,8 @@
 package com.wanted.preonboarding.ticket.domain.vo;
 
+import lombok.Getter;
+
+@Getter
 public enum PerformanceType {
     NONE(0),
     CONCERT(1),
@@ -9,10 +12,6 @@ public enum PerformanceType {
 
     PerformanceType(int category) {
         this.category = category;
-    }
-
-    public int getCategory() {
-        return category;
     }
 
 }
